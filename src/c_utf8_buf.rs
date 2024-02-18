@@ -8,7 +8,7 @@ use core::iter::FromIterator;
 use core::ops::{Deref, DerefMut};
 
 use crate::c_utf8::CUtf8;
-use crate::ext::Ext;
+use crate::ext::IsNulTerminated;
 
 /// An owned, mutable UTF-8 encoded C string (akin to [`String`] or
 /// [`PathBuf`]).

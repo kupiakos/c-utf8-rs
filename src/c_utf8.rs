@@ -11,7 +11,7 @@ use std::ffi::OsStr;
 use std::path::Path;
 
 use crate::error::Error;
-use crate::ext::Ext;
+use crate::ext::IsNulTerminated;
 
 /// Like [`CStr`](https://doc.rust-lang.org/core/ffi/struct.CStr.html), except
 /// with the guarantee of being encoded as valid [UTF-8].
