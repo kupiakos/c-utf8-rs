@@ -6,8 +6,8 @@ use std::ops::{Deref, DerefMut};
 use std::string::String;
 use std::{vec, vec::Vec};
 
-use c_utf8::CUtf8;
-use ext::Ext;
+use crate::c_utf8::CUtf8;
+use crate::ext::Ext;
 
 /// An owned, mutable UTF-8 encoded C string (akin to [`String`] or
 /// [`PathBuf`]).

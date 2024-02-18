@@ -1,6 +1,5 @@
 use core::fmt;
 use core::str::Utf8Error;
-
 use core::ffi::FromBytesWithNulError;
 
 /// The error for converting types to [`CUtf8`](struct.CUtf8.html).
@@ -38,17 +37,9 @@ impl fmt::Display for Error {
 }
 
 #[cfg(feature = "std")]
-impl ::std::error::Error for Error {
+impl std::error::Error for Error {
     #[inline]
-    fn description(&self) -> &str {
-        match *self {
-            Error::Nul => NUL_ERROR,
-            Error::Utf8(ref err) => err.description(),
-        }
-    }
-
-    #[inline]
-    fn cause(&self) -> Option<&::std::error::Error> {
+    fn cause(&self) -> Option<&dyn std::error::Error> {
         match *self {
             Error::Utf8(ref err) => Some(err),
             _ => None,

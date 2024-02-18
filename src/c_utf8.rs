@@ -8,9 +8,9 @@ use std::ffi::{CStr, OsStr};
 #[cfg(feature = "std")]
 use std::path::Path;
 
-use c_char;
-use error::Error;
-use ext::Ext;
+use crate::c_char;
+use crate::error::Error;
+use crate::ext::Ext;
 
 /// Like [`CStr`](https://doc.rust-lang.org/std/ffi/struct.CStr.html), except
 /// with the guarantee of being encoded as valid [UTF-8].
