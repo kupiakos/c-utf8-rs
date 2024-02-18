@@ -66,10 +66,6 @@
 
 #![deny(missing_docs)]
 #![no_std]
-#![cfg_attr(all(test, nightly), feature(test))]
-
-#[cfg(all(test, nightly))]
-extern crate test;
 
 #[cfg(feature = "std")]
 extern crate std;
