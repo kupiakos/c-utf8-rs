@@ -1,10 +1,11 @@
-use std::borrow::{Borrow, BorrowMut, ToOwned};
-use std::boxed::Box;
-use std::fmt;
-use std::iter::FromIterator;
-use std::ops::{Deref, DerefMut};
-use std::string::String;
-use std::{vec, vec::Vec};
+use alloc::borrow::ToOwned;
+use alloc::boxed::Box;
+use alloc::string::String;
+use alloc::{vec, vec::Vec};
+use core::borrow::{Borrow, BorrowMut};
+use core::fmt;
+use core::iter::FromIterator;
+use core::ops::{Deref, DerefMut};
 
 use crate::c_utf8::CUtf8;
 use crate::ext::Ext;

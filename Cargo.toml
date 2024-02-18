@@ -16,4 +16,5 @@ travis-ci = { repository = "nvzqz/c-utf8-rs" }
 
 [features]
 default  = ["std"]
-std      = []
+alloc    = []
+std      = ["alloc"]

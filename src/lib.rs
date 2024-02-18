@@ -67,6 +67,9 @@
 #![deny(missing_docs)]
 #![no_std]
 
+#[cfg(feature = "alloc")]
+extern crate alloc;
+
 #[cfg(feature = "std")]
 extern crate std;
 
@@ -128,12 +131,12 @@ macro_rules! c_utf8 {
 }
 
 mod c_utf8;
-#[cfg(feature = "std")]
+#[cfg(feature = "alloc")]
 mod c_utf8_buf;
 mod error;
 mod ext;
 
 pub use self::c_utf8::*;
-#[cfg(feature = "std")]
+#[cfg(feature = "alloc")]
 pub use self::c_utf8_buf::*;
 pub use self::error::*;
