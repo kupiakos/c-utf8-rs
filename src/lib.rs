@@ -34,7 +34,7 @@
 //!
 //! ```
 //! # #[macro_use] extern crate c_utf8;
-//! use c_utf8::CUtf8;
+//! use c_utf8::{c_utf8, CUtf8};
 //!
 //! const MESSAGE: &CUtf8 = c_utf8!("Heyo!");
 //!
@@ -89,15 +89,10 @@ extern crate std;
 /// The resulting string will _always_ end with a 0 byte:
 ///
 /// ```
-/// #[macro_use]
-/// extern crate c_utf8;
-///
-/// fn main() {
-///     let string = c_utf8!("Hello!");
-///     let bytes  = [72, 101, 108, 108, 111, 33, 0];
-///
-///     assert_eq!(string.as_bytes_with_nul(), &bytes);
-/// }
+/// use c_utf8::c_utf8;
+/// let string = c_utf8!("Hello!");
+/// let bytes = *b"Hello!\0";
+/// assert_eq!(string.as_bytes_with_nul(), &bytes);
 /// ```
 ///
 /// The macro can even be evaluated within a constant expression. This allows
@@ -111,21 +106,24 @@ extern crate std;
 /// # }
 /// ```
 ///
+/// A `c_utf8!` literal cannot contain any intermediate `\0`:
+///
+/// ```compile_fail
+/// # use c_utf8::c_utf8;
+/// let _fails = c_utf8!("Null\0in the middle");
+/// ```
+///
 /// [`str`]: https://doc.rust-lang.org/std/primitive.str.html
 #[macro_export]
 macro_rules! c_utf8 {
     ($s:expr) => {
+        // SAFETY:
+        // - `$s` is guaranteed to be a UTF-8 `str`,
+        // - The `concat!` guarantees the input is nul terminated
+        // - `check_no_nul` ensures that `$s` contains no other nul terminators
         unsafe {
-            // An internal type that allows for converting static Rust string
-            // slices into static CUtf8 slices within a constant expression
-            union _Ref<'a> {
-                s: &'a str,
-                c: &'a $crate::CUtf8,
-            }
-            _Ref {
-                s: concat!($s, "\0"),
-            }
-            .c
+            const _: () = $crate::__internal_unstable::check_no_nul($s);
+            $crate::CUtf8::from_str_unchecked(concat!($s, "\0"))
         }
     };
 }
@@ -139,3 +137,7 @@ pub use self::c_utf8::*;
 #[cfg(feature = "alloc")]
 pub use self::c_utf8_buf::*;
 pub use self::error::*;
+
+#[path = "internal.rs"]
+#[doc(hidden)]
+pub mod __internal_unstable;
