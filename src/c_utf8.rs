@@ -1,10 +1,11 @@
 use core::convert::TryFrom;
 use core::ffi::c_char;
+use core::ffi::CStr;
 use core::fmt;
 use core::str::{self, Utf8Error};
 
 #[cfg(feature = "std")]
-use std::ffi::{CStr, OsStr};
+use std::ffi::OsStr;
 
 #[cfg(feature = "std")]
 use std::path::Path;
@@ -12,7 +13,7 @@ use std::path::Path;
 use crate::error::Error;
 use crate::ext::Ext;
 
-/// Like [`CStr`](https://doc.rust-lang.org/std/ffi/struct.CStr.html), except
+/// Like [`CStr`](https://doc.rust-lang.org/core/ffi/struct.CStr.html), except
 /// with the guarantee of being encoded as valid [UTF-8].
 ///
 /// Use the [`c_utf8!`](macro.c_utf8.html) macro to conveniently create static
@@ -44,7 +45,6 @@ impl<'a> TryFrom<&'a [u8]> for &'a CUtf8 {
     }
 }
 
-#[cfg(feature = "std")]
 impl<'a> TryFrom<&'a CStr> for &'a CUtf8 {
     type Error = Utf8Error;
 
@@ -70,7 +70,6 @@ impl AsRef<str> for CUtf8 {
     }
 }
 
-#[cfg(feature = "std")]
 impl AsRef<CStr> for CUtf8 {
     #[inline]
     fn as_ref(&self) -> &CStr {
@@ -150,7 +149,6 @@ impl CUtf8 {
     }
 
     /// Returns the C string if it is valid UTF-8.
-    #[cfg(feature = "std")]
     #[inline]
     pub fn from_c_str(c: &CStr) -> Result<&CUtf8, Utf8Error> {
         let s = str::from_utf8(c.to_bytes_with_nul())?;
@@ -160,22 +158,7 @@ impl CUtf8 {
     /// Returns the raw C string if it is valid UTF-8 up to the first nul byte.
     #[inline]
     pub unsafe fn from_ptr<'a>(raw: *const c_char) -> Result<&'a CUtf8, Utf8Error> {
-        #[cfg(feature = "std")]
-        {
-            CUtf8::from_c_str(CStr::from_ptr(raw))
-        }
-        #[cfg(not(feature = "std"))]
-        {
-            use core::slice;
-
-            extern "C" {
-                fn strlen(cs: *const c_char) -> usize;
-            }
-
-            let n = strlen(raw) + 1;
-            let s = str::from_utf8(slice::from_raw_parts(raw as *const u8, n))?;
-            Ok(CUtf8::from_str_unchecked(s))
-        }
+        CUtf8::from_c_str(CStr::from_ptr(raw))
     }
 
     /// Returns the number of bytes without taking into account the trailing nul
@@ -240,7 +223,6 @@ impl CUtf8 {
     }
 
     /// Returns a C string without checking UTF-8 validity.
-    #[cfg(feature = "std")]
     #[inline]
     pub unsafe fn from_c_str_unchecked(c: &CStr) -> &CUtf8 {
         Self::from_bytes_unchecked(c.to_bytes_with_nul())
@@ -253,7 +235,6 @@ impl CUtf8 {
     }
 
     /// Returns `self` as a normal C string.
-    #[cfg(feature = "std")]
     #[inline]
     pub fn as_c_str(&self) -> &CStr {
         unsafe { CStr::from_bytes_with_nul_unchecked(self.as_bytes_with_nul()) }
