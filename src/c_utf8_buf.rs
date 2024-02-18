@@ -8,7 +8,6 @@ use core::iter::FromIterator;
 use core::ops::{Deref, DerefMut};
 
 use crate::c_utf8::CUtf8;
-use crate::ext::IsNulTerminated;
 
 /// An owned, mutable UTF-8 encoded C string (akin to [`String`] or
 /// [`PathBuf`]).
@@ -233,7 +232,7 @@ impl CUtf8Buf {
     /// terminator if one doesn't already exist.
     #[inline]
     pub fn from_string(mut s: String) -> CUtf8Buf {
-        if !s.is_nul_terminated() {
+        if s.as_bytes().last() != Some(&b'0') {
             unsafe { s.as_mut_vec().push(0) };
         }
         CUtf8Buf(s)
@@ -242,7 +241,7 @@ impl CUtf8Buf {
     /// Creates a new C string from a native Rust string without checking for a
     /// nul terminator.
     #[inline]
-    pub unsafe fn from_string_unchecked(s: String) -> CUtf8Buf {
+    pub const unsafe fn from_string_unchecked(s: String) -> CUtf8Buf {
         CUtf8Buf(s)
     }
 

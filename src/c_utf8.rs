@@ -11,7 +11,6 @@ use std::ffi::OsStr;
 use std::path::Path;
 
 use crate::error::Error;
-use crate::ext::IsNulTerminated;
 
 /// Like [`CStr`](https://doc.rust-lang.org/core/ffi/struct.CStr.html), except
 /// with the guarantee of being encoded as valid [UTF-8].
@@ -133,15 +132,18 @@ impl CUtf8 {
     /// Returns a C string containing `bytes`, or an error if a nul byte is in
     /// an unexpected position or if the bytes are not encoded as UTF-8.
     #[inline]
-    pub fn from_bytes(bytes: &[u8]) -> Result<&CUtf8, Error> {
-        CUtf8::from_str(str::from_utf8(bytes)?)
+    pub const fn from_bytes(bytes: &[u8]) -> Result<&CUtf8, Error> {
+        CUtf8::from_str(match str::from_utf8(bytes) {
+            Ok(it) => it,
+            Err(err) => return Err(Error::Utf8(err)),
+        })
     }
 
     /// Returns the UTF-8 string if it is terminated by a nul byte.
     #[inline]
     #[allow(clippy::should_implement_trait)]
-    pub fn from_str(s: &str) -> Result<&CUtf8, Error> {
-        if s.is_nul_terminated() {
+    pub const fn from_str(s: &str) -> Result<&CUtf8, Error> {
+        if let Some(b'0') = s.as_bytes().last() {
             unsafe { Ok(CUtf8::from_str_unchecked(s)) }
         } else {
             Err(Error::Nul)
@@ -150,9 +152,11 @@ impl CUtf8 {
 
     /// Returns the C string if it is valid UTF-8.
     #[inline]
-    pub fn from_c_str(c: &CStr) -> Result<&CUtf8, Utf8Error> {
-        let s = str::from_utf8(c.to_bytes_with_nul())?;
-        unsafe { Ok(CUtf8::from_str_unchecked(s)) }
+    pub const fn from_c_str(c: &CStr) -> Result<&CUtf8, Utf8Error> {
+        match str::from_utf8(c.to_bytes_with_nul()) {
+            Ok(s) => Ok(unsafe { CUtf8::from_str_unchecked(s) }),
+            Err(e) => return Err(e),
+        }
     }
 
     /// Returns the raw C string if it is valid UTF-8 up to the first nul byte.
@@ -212,7 +216,7 @@ impl CUtf8 {
 
     /// Returns a C string without checking for a trailing nul byte.
     #[inline]
-    pub unsafe fn from_str_unchecked(s: &str) -> &CUtf8 {
+    pub const unsafe fn from_str_unchecked(s: &str) -> &CUtf8 {
         &*(s as *const str as *const CUtf8)
     }
 

@@ -134,7 +134,6 @@ mod c_utf8;
 #[cfg(feature = "alloc")]
 mod c_utf8_buf;
 mod error;
-mod ext;
 
 pub use self::c_utf8::*;
 #[cfg(feature = "alloc")]

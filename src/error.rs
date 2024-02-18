@@ -1,6 +1,6 @@
+use core::ffi::FromBytesWithNulError;
 use core::fmt;
 use core::str::Utf8Error;
-use core::ffi::FromBytesWithNulError;
 
 /// The error for converting types to [`CUtf8`](struct.CUtf8.html).
 #[derive(Clone, Debug)]
