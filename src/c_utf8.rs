@@ -140,6 +140,7 @@ impl CUtf8 {
 
     /// Returns the UTF-8 string if it is terminated by a nul byte.
     #[inline]
+    #[allow(clippy::should_implement_trait)]
     pub fn from_str(s: &str) -> Result<&CUtf8, Error> {
         if s.is_nul_terminated() {
             unsafe { Ok(CUtf8::from_str_unchecked(s)) }
