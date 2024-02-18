@@ -11,7 +11,7 @@ pub enum Error {
     Utf8(Utf8Error),
 }
 
-static NUL_ERROR: &str = "Missing nul byte at the end of the string";
+const NUL_ERROR: &str = "Missing nul byte at the end of the string";
 
 impl From<Utf8Error> for Error {
     #[inline]

@@ -36,7 +36,7 @@
 //! # #[macro_use] extern crate c_utf8;
 //! use c_utf8::CUtf8;
 //!
-//! static MESSAGE: &CUtf8 = c_utf8!("Heyo!");
+//! const MESSAGE: &CUtf8 = c_utf8!("Heyo!");
 //!
 //! fn main() {
 //!     let bytes = [72, 101, 121, 111, 33, 0];
@@ -105,7 +105,7 @@ extern crate std;
 ///
 /// ```
 /// # #[macro_use] extern crate c_utf8; use c_utf8::CUtf8; fn main() {
-/// static APP_NAME: &CUtf8 = c_utf8!(env!("CARGO_PKG_NAME"));
+/// const APP_NAME: &CUtf8 = c_utf8!(env!("CARGO_PKG_NAME"));
 ///
 /// assert_eq!(APP_NAME.as_str_with_nul(), "c_utf8\0");
 /// # }
