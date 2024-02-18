@@ -122,7 +122,9 @@ impl fmt::Display for CUtf8 {
 
 impl<'a> Default for &'a CUtf8 {
     #[inline]
-    fn default() -> &'a CUtf8 { CUtf8::EMPTY }
+    fn default() -> &'a CUtf8 {
+        CUtf8::EMPTY
+    }
 }
 
 // Without this, the documentation shows the macro expansion, which is noisy
@@ -162,13 +164,15 @@ impl CUtf8 {
     /// Returns the raw C string if it is valid UTF-8 up to the first nul byte.
     #[inline]
     pub unsafe fn from_ptr<'a>(raw: *const c_char) -> Result<&'a CUtf8, Utf8Error> {
-        #[cfg(feature = "std")] {
+        #[cfg(feature = "std")]
+        {
             CUtf8::from_c_str(CStr::from_ptr(raw))
         }
-        #[cfg(not(feature = "std"))] {
+        #[cfg(not(feature = "std"))]
+        {
             use core::slice;
 
-            extern {
+            extern "C" {
                 fn strlen(cs: *const c_char) -> usize;
             }
 
@@ -289,7 +293,7 @@ impl CUtf8 {
 #[cfg(all(test, nightly))]
 mod benches {
     use super::*;
-    use test::{Bencher, black_box};
+    use test::{black_box, Bencher};
 
     #[bench]
     fn from_bytes(b: &mut Bencher) {

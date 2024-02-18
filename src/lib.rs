@@ -120,51 +120,75 @@ macro_rules! c_utf8 {
         unsafe {
             // An internal type that allows for converting static Rust string
             // slices into static CUtf8 slices within a constant expression
-            union _Ref<'a> { s: &'a str, c: &'a $crate::CUtf8 }
-            _Ref { s: concat!($s, "\0") }.c
+            union _Ref<'a> {
+                s: &'a str,
+                c: &'a $crate::CUtf8,
+            }
+            _Ref {
+                s: concat!($s, "\0"),
+            }
+            .c
         }
-    }
+    };
 }
 
+mod c_utf8;
 #[cfg(feature = "std")]
 mod c_utf8_buf;
-mod c_utf8;
 mod error;
 mod ext;
 
+pub use self::c_utf8::*;
 #[cfg(feature = "std")]
 pub use self::c_utf8_buf::*;
-pub use self::c_utf8::*;
 pub use self::error::*;
 
 /// Equivalent to C's `char` type.
 #[allow(non_camel_case_types)]
 #[cfg(not(feature = "std"))]
-#[cfg(any(all(target_os = "linux", any(target_arch = "aarch64",
-                                       target_arch = "arm",
-                                       target_arch = "powerpc",
-                                       target_arch = "powerpc64",
-                                       target_arch = "s390x")),
-          all(target_os = "android", any(target_arch = "aarch64",
-                                         target_arch = "arm")),
-          all(target_os = "l4re", target_arch = "x86_64"),
-          all(target_os = "openbsd", target_arch = "aarch64"),
-          all(target_os = "fuchsia", target_arch = "aarch64")))]
+#[cfg(any(
+    all(
+        target_os = "linux",
+        any(
+            target_arch = "aarch64",
+            target_arch = "arm",
+            target_arch = "powerpc",
+            target_arch = "powerpc64",
+            target_arch = "s390x"
+        )
+    ),
+    all(
+        target_os = "android",
+        any(target_arch = "aarch64", target_arch = "arm")
+    ),
+    all(target_os = "l4re", target_arch = "x86_64"),
+    all(target_os = "openbsd", target_arch = "aarch64"),
+    all(target_os = "fuchsia", target_arch = "aarch64")
+))]
 pub type c_char = u8;
 
 /// Equivalent to C's `char` type.
 #[allow(non_camel_case_types)]
 #[cfg(not(feature = "std"))]
-#[cfg(not(any(all(target_os = "linux", any(target_arch = "aarch64",
-                                           target_arch = "arm",
-                                           target_arch = "powerpc",
-                                           target_arch = "powerpc64",
-                                           target_arch = "s390x")),
-              all(target_os = "android", any(target_arch = "aarch64",
-                                             target_arch = "arm")),
-              all(target_os = "l4re", target_arch = "x86_64"),
-              all(target_os = "openbsd", target_arch = "aarch64"),
-              all(target_os = "fuchsia", target_arch = "aarch64"))))]
+#[cfg(not(any(
+    all(
+        target_os = "linux",
+        any(
+            target_arch = "aarch64",
+            target_arch = "arm",
+            target_arch = "powerpc",
+            target_arch = "powerpc64",
+            target_arch = "s390x"
+        )
+    ),
+    all(
+        target_os = "android",
+        any(target_arch = "aarch64", target_arch = "arm")
+    ),
+    all(target_os = "l4re", target_arch = "x86_64"),
+    all(target_os = "openbsd", target_arch = "aarch64"),
+    all(target_os = "fuchsia", target_arch = "aarch64")
+)))]
 pub type c_char = i8;
 
 #[cfg(feature = "std")]

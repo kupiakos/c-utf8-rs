@@ -73,7 +73,10 @@ impl DerefMut for CUtf8Buf {
     }
 }
 
-impl<T> FromIterator<T> for CUtf8Buf where String: FromIterator<T> {
+impl<T> FromIterator<T> for CUtf8Buf
+where
+    String: FromIterator<T>,
+{
     #[inline]
     fn from_iter<I: IntoIterator<Item = T>>(it: I) -> CUtf8Buf {
         CUtf8Buf::from_string(it.into_iter().collect())
@@ -115,22 +118,30 @@ impl fmt::Write for CUtf8Buf {
 
 impl Borrow<CUtf8> for CUtf8Buf {
     #[inline]
-    fn borrow(&self) -> &CUtf8 { self }
+    fn borrow(&self) -> &CUtf8 {
+        self
+    }
 }
 
 impl BorrowMut<CUtf8> for CUtf8Buf {
     #[inline]
-    fn borrow_mut(&mut self) -> &mut CUtf8 { self }
+    fn borrow_mut(&mut self) -> &mut CUtf8 {
+        self
+    }
 }
 
 impl AsRef<CUtf8> for CUtf8Buf {
     #[inline]
-    fn as_ref(&self) -> &CUtf8 { self }
+    fn as_ref(&self) -> &CUtf8 {
+        self
+    }
 }
 
 impl AsMut<CUtf8> for CUtf8Buf {
     #[inline]
-    fn as_mut(&mut self) -> &mut CUtf8 { self }
+    fn as_mut(&mut self) -> &mut CUtf8 {
+        self
+    }
 }
 
 impl ToOwned for CUtf8 {
@@ -233,7 +244,8 @@ impl CUtf8Buf {
 
     #[inline]
     fn with_string<F, T>(&mut self, f: F) -> T
-        where F: FnOnce(&mut String) -> T
+    where
+        F: FnOnce(&mut String) -> T,
     {
         // Remove nul byte
         unsafe { self.0.as_mut_vec().pop() };
