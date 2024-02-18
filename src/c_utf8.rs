@@ -1,4 +1,5 @@
 use core::convert::TryFrom;
+use core::ffi::c_char;
 use core::fmt;
 use core::str::{self, Utf8Error};
 
@@ -8,7 +9,6 @@ use std::ffi::{CStr, OsStr};
 #[cfg(feature = "std")]
 use std::path::Path;
 
-use crate::c_char;
 use crate::error::Error;
 use crate::ext::Ext;
 
