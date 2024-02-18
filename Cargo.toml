@@ -20,4 +20,3 @@ version_check = "0.1"
 [features]
 default  = ["std"]
 std      = []
-try_from = []

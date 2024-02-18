@@ -1,3 +1,4 @@
+use core::convert::TryFrom;
 use core::fmt;
 use core::str::{self, Utf8Error};
 
@@ -34,37 +35,31 @@ use ext::Ext;
 #[derive(PartialEq, Eq, Hash, PartialOrd, Ord)]
 pub struct CUtf8(str);
 
-#[cfg(feature = "try_from")]
-mod try_from {
-    use super::*;
-    use core::convert::TryFrom;
+impl<'a> TryFrom<&'a [u8]> for &'a CUtf8 {
+    type Error = Error;
 
-    impl<'a> TryFrom<&'a [u8]> for &'a CUtf8 {
-        type Error = Error;
-
-        #[inline]
-        fn try_from(bytes: &[u8]) -> Result<&CUtf8, Self::Error> {
-            CUtf8::from_bytes(bytes)
-        }
+    #[inline]
+    fn try_from(bytes: &[u8]) -> Result<&CUtf8, Self::Error> {
+        CUtf8::from_bytes(bytes)
     }
+}
 
-    #[cfg(feature = "std")]
-    impl<'a> TryFrom<&'a CStr> for &'a CUtf8 {
-        type Error = Utf8Error;
+#[cfg(feature = "std")]
+impl<'a> TryFrom<&'a CStr> for &'a CUtf8 {
+    type Error = Utf8Error;
 
-        #[inline]
-        fn try_from(c: &CStr) -> Result<&CUtf8, Self::Error> {
-            CUtf8::from_c_str(c)
-        }
+    #[inline]
+    fn try_from(c: &CStr) -> Result<&CUtf8, Self::Error> {
+        CUtf8::from_c_str(c)
     }
+}
 
-    impl<'a> TryFrom<&'a str> for &'a CUtf8 {
-        type Error = Error;
+impl<'a> TryFrom<&'a str> for &'a CUtf8 {
+    type Error = Error;
 
-        #[inline]
-        fn try_from(s: &str) -> Result<&CUtf8, Self::Error> {
-            CUtf8::from_str(s)
-        }
+    #[inline]
+    fn try_from(s: &str) -> Result<&CUtf8, Self::Error> {
+        CUtf8::from_str(s)
     }
 }
 
