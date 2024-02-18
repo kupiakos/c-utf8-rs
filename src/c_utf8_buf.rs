@@ -1,7 +1,10 @@
 use std::borrow::{Borrow, BorrowMut, ToOwned};
+use std::boxed::Box;
 use std::fmt;
 use std::iter::FromIterator;
 use std::ops::{Deref, DerefMut};
+use std::string::String;
+use std::{vec, vec::Vec};
 
 use c_utf8::CUtf8;
 use ext::Ext;

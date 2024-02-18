@@ -65,7 +65,7 @@
 //! [`CUtf8Buf`]: struct.CUtf8Buf.html
 
 #![deny(missing_docs)]
-#![cfg_attr(not(feature = "std"), no_std)]
+#![no_std]
 #![cfg_attr(feature = "try_from", feature(try_from))]
 #![cfg_attr(all(test, nightly), feature(test))]
 
@@ -73,7 +73,7 @@
 extern crate test;
 
 #[cfg(feature = "std")]
-use std as core;
+extern crate std;
 
 /// Creates a [`&'static CUtf8`](struct.CUtf8.html) from a native Rust [`str`]
 /// string literal, making it much easier to work with C APIs that are strict
